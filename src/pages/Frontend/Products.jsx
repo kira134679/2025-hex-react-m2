@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { guestProductsApi } from '../../api';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../../slice/cartSlice';
+import toast from 'react-hot-toast';
 
 export default function Products() {
   const [products, setProducts] = useState([]);
+  const dispatch = useDispatch();
 
   const getProducts = async () => {
     try {
@@ -11,6 +15,15 @@ export default function Products() {
       setProducts(res.products);
     } catch (error) {
       setProducts([]);
+    }
+  };
+
+  const handleAddToCart = async data => {
+    try {
+      await dispatch(addToCart(data)).unwrap();
+      toast.success('加入購物車成功');
+    } catch (error) {
+      toast.error(error);
     }
   };
 
@@ -43,7 +56,12 @@ export default function Products() {
                     )}
                   </div>
                   <div className="text-end mt-auto">
-                    <button type="button" className="btn btn-primary position-relative" style={{ zIndex: 10 }}>
+                    <button
+                      type="button"
+                      className="btn btn-primary position-relative"
+                      style={{ zIndex: 10 }}
+                      onClick={() => handleAddToCart({ data: { product_id: product.id, qty: 1 } })}
+                    >
                       加入購物車
                     </button>
                   </div>

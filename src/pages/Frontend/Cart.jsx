@@ -1,15 +1,23 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import * as z from 'zod';
+import { getCart, selectCartList } from '../../slice/cartSlice';
+import { useSelector } from 'react-redux';
+
+const checkoutSchema = z.object({
+  name: z.string().min(1, { error: '姓名為必填' }),
+  email: z.email({ error: 'Email 格式錯誤' }),
+  tel: z.string().refine(tel => /^09\d{8}$/.test(tel), { error: '手機號碼格式錯誤' }),
+  address: z.string().min(1, { error: '地址為必填' }),
+  message: z.string(),
+});
 
 export default function Cart() {
-  const checkoutSchema = z.object({
-    name: z.string().min(1, { error: '姓名為必填' }),
-    email: z.email({ error: 'Email 格式錯誤' }),
-    tel: z.string().refine(tel => /^09\d{8}$/.test(tel), { error: '手機號碼格式錯誤' }),
-    address: z.string().min(1, { error: '地址為必填' }),
-    message: z.string(),
-  });
+  // const cartList = useSelector(selectCartList);
+  // console.log('cartList', cartList);
+
   const {
     register,
     handleSubmit,
@@ -28,6 +36,12 @@ export default function Cart() {
     };
     console.log('checkout', payload);
   };
+
+  const dispatch = useDispatch();
+
+  // useEffect(() => {
+  //   dispatch(getCart());
+  // }, [dispatch]);
 
   return (
     <>
